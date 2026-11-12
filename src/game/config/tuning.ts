@@ -20,7 +20,7 @@ export const T = {
   // ★ 运动
   DT: 1 / 120,
   MAX_SUBSTEPS: 4,
-  FRICTION_K: 1.8, // 越大越"涩"，越小越"滑"
+  FRICTION_K: 1.4, // 越大越"涩"，越小越"滑"
   STOP_EPS: 12,
   MAX_SPEED: 2600,
 

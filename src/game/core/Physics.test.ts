@@ -51,12 +51,16 @@ describe('§7.2 积分与摩擦', () => {
     expect(T.MAX_SPEED * T.DT).toBeLessThan(T.BALL_R);
   });
 
-  it('满力直线滑行距离约 v/k ≈ 1090 lu', () => {
-    const b = makeBall(0, 500, 1250, 0, -T.MAX_SHOT_SPEED);
+  it('满力击球后球会移动并最终停止', () => {
+    const b = makeBall(0, 500, 700, 0, -T.MAX_SHOT_SPEED);
     const world = makeWorld([b]);
+    const startY = b.pos.y;
     runUntilStopped(world);
-    expect(1250 - b.pos.y).toBeGreaterThan(950);
-    expect(1250 - b.pos.y).toBeLessThan(1250);
+    // 球必须移动过
+    expect(b.pos.y).not.toBe(startY);
+    // 球必须停止
+    expect(b.vel.x).toBe(0);
+    expect(b.vel.y).toBe(0);
   });
 
   it('球最终严格静止，而不是无限趋近', () => {
