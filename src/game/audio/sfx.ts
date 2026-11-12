@@ -11,28 +11,34 @@ const ensureCtx = (): AudioContext => {
   return ctx;
 };
 
-/** 击打声：短促"嗒"，800Hz → 400Hz，50ms。 */
+/** 击打声：短促"啪"，白噪声 + 带通滤波，30ms 衰减。 */
 export const playShot = (): void => {
   try {
     const c = ensureCtx();
-    const osc = c.createOscillator();
+    const bufferSize = c.sampleRate * 0.03; // 30ms
+    const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+    }
+    const noise = c.createBufferSource();
+    noise.buffer = buffer;
+    const filter = c.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 2000;
+    filter.Q.value = 0.8;
     const gain = c.createGain();
-    osc.connect(gain);
+    gain.gain.value = 0.4;
+    noise.connect(filter);
+    filter.connect(gain);
     gain.connect(c.destination);
-    osc.type = 'sine';
-    const t = c.currentTime;
-    osc.frequency.setValueAtTime(800, t);
-    osc.frequency.exponentialRampToValueAtTime(400, t + 0.05);
-    gain.gain.setValueAtTime(0.3, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
-    osc.start(t);
-    osc.stop(t + 0.05);
+    noise.start();
   } catch {
     // 音频失败不影响游戏
   }
 };
 
-/** 进球声：低沉"咚"，200Hz → 100Hz，200ms。 */
+/** 进球声：低沉"咚"，低频正弦 + 指数衰减，300ms，模拟袋口空腔共鸣。 */
 export const playPot = (): void => {
   try {
     const c = ensureCtx();
@@ -42,12 +48,12 @@ export const playPot = (): void => {
     gain.connect(c.destination);
     osc.type = 'sine';
     const t = c.currentTime;
-    osc.frequency.setValueAtTime(200, t);
-    osc.frequency.exponentialRampToValueAtTime(100, t + 0.2);
-    gain.gain.setValueAtTime(0.4, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+    osc.frequency.setValueAtTime(150, t);
+    osc.frequency.exponentialRampToValueAtTime(60, t + 0.3);
+    gain.gain.setValueAtTime(0.5, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
     osc.start(t);
-    osc.stop(t + 0.2);
+    osc.stop(t + 0.3);
   } catch {
     // 音频失败不影响游戏
   }
