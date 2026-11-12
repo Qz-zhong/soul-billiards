@@ -114,10 +114,7 @@ export default function GameScreen({ onExit }: { onExit: () => void }): JSX.Elem
           // 音效：进球播一次，碰撞按撞击速度播
           for (const e of world.events) {
             if (e.type === 'POT') playPot();
-            else if (e.type === 'COLLISION') {
-              const impactSpeed = Math.hypot(e.a.vel.x - e.b.vel.x, e.a.vel.y - e.b.vel.y);
-              playCollision(impactSpeed);
-            }
+            else if (e.type === 'COLLISION') playCollision();
           }
           world.events.length = 0;
           if (allStopped(world)) {
