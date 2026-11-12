@@ -5,5 +5,7 @@ export const COPY = {
   tagline: '把情绪打进袋里的竖屏台球解压游戏',
   scope: '3 章 · 9 局 · 约 10 分钟',
   start: '开始',
-  scaffoldNote: '仓库骨架已部署，M0 手感验证尚未开始。',
+  stageNote: 'M0 手感验证：空桌、母球、三颗球。无词、无音效、无关卡。',
+  reset: '重置',
+  back: '返回',
 } as const;

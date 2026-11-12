@@ -9,7 +9,7 @@
 | 形态 | 纯前端 Web App——无后端、无登录、运行期零第三方请求 |
 | 部署 | Qoder Sites，**public** 访问模式，静态产物 · <https://soul-billiards-436212hxx0z.qoder.zone> |
 | 规格来源 | [`docs/设计摘要.md`](docs/设计摘要.md)（公开摘要）。完整规格文档 v1.0 暂不入库，正式发布后公开 |
-| 当前阶段 | **仓库骨架**。`src/game/**` 的核心实现属于 M0 及之后，尚未开始 |
+| 当前阶段 | **M0 手感验证**。物理、预测线、渲染分层已落地，单测覆盖碰撞与进袋判定，等你真机打 20 杆定调 |
 
 ---
 
@@ -17,8 +17,8 @@
 
 | ID | 内容 | DoD 摘要 | 状态 |
 |----|------|----------|------|
-| — | 仓库骨架 + 构建链路 + 站点部署 | `npm run build` 通过、`dist` 纯静态、站点 public 可访问 | 本提交 |
-| M0 | 手感验证（唯一硬卡点） | 真机微信内连续 20 杆：瞄得准、撞库不诡异、进袋判定不吞早/漏吞、力度有层次 | 未开始 |
+| — | 仓库骨架 + 构建链路 + 站点部署 | `npm run build` 通过、`dist` 纯静态、站点 public 可访问 | 已完成 |
+| M0 | 手感验证（唯一硬卡点） | 真机微信内连续 20 杆：瞄得准、撞库不诡异、进袋判定不吞早/漏吞、力度有层次 | 代码完成，待真机验收 |
 | M1 | 反馈层 | 吞袋/爆碎/飘字/音效同帧（< 50 ms），`?debug=perf` 掉帧 < 3 帧/关 | 未开始 |
 | M2 | 内容与流程 | 九关 + 状态机 + 六种特化球，全程无卡死无状态泄漏 | 未开始 |
 | M3 | 表达层 | `RunStats` + 14 条规则各有单测，三张疏导页 | 未开始 |
@@ -54,21 +54,40 @@
 ├── public/                    # 不放任何位图
 └── src/
     ├── main.tsx
-    ├── App.tsx                # 屏幕路由（M2 接入 Machine.ts 后接管）
+    ├── App.tsx                # 标题页 ↔ 球台页；M2 接入 Machine.ts 后接管
     ├── screens/
-    │   └── TitleScreen.tsx
+    │   ├── TitleScreen.tsx
+    │   └── GameScreen.tsx     # 画布唯一持有者，aim / lunge / roll 三态
     ├── styles/global.css      # §8.3 色板 → CSS 变量
     └── game/
-        └── config/copy.ts     # 面向用户中文文案的唯一出口
+        ├── ShotFlow.test.ts   # 拖拽 → 预测 → 出杆 → 停稳的整杆流程
+        ├── config/
+        │   ├── copy.ts        # 面向用户中文文案的唯一出口
+        │   └── tuning.ts      # §13 调参总表，★ 标记 M0 真机要调的三项
+        ├── core/
+        │   ├── Vec2.ts        # 不可变向量运算
+        │   ├── Ball.ts
+        │   ├── Pocket.ts      # 袋位 + 8 段库边的拓扑，缺口即袋口
+        │   ├── World.ts       # 球台状态与 M0 摆位
+        │   ├── Physics.ts     # 冲量碰撞 + 库边反射 + 捕获判定
+        │   └── Loop.ts        # 固定步长累加器，dt = 1/120
+        ├── input/
+        │   └── PointerAim.ts  # 弹弓瞄准与力度映射 + Minkowski 预测线
+        └── render/
+            ├── palette.ts     # 从 CSS 变量读色，保持单一来源
+            ├── table.ts       # §8.2 图层 1–5，离屏缓存一次
+            ├── ballSprite.ts  # 图层 6–7：阴影、球体、高光
+            ├── aimGuide.ts    # 图层 8：预测线、Ghost Ball、出射/偏转虚线
+            └── Renderer.ts    # 视口映射与 DPR，逻辑坐标 → 设备坐标
 ```
 
-`src/game/core` `behaviors` `input` `render` `state` `stats` `feedback` `audio` `storage` 按 §12.2 建立，随 M0 逐个落地，骨架阶段不预建空文件。
+`game/behaviors` `state` `stats` `feedback` `audio` `storage` 按 §12.2 建立，随 M1–M3 落地，不预建空文件。
 
 **约定**
 
 - `game/**` 内不允许 `import React`。
 - `config/copy.ts` 是唯一的用户可见文案出口，组件里禁止硬编码中文文案。
-- 所有可调数值集中在 `config/tuning.ts`（M0 创建），禁止散落在逻辑里。
+- 所有可调数值集中在 `config/tuning.ts`，禁止散落在逻辑里。带 ★ 的三项（`FRICTION_K` `REST_CUSHION` `DRAG_FULL_PX`）是 M0 真机手感阶段的调参入口。
 
 ---
 
