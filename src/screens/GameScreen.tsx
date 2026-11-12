@@ -15,7 +15,7 @@ import {
 } from '../game/input/PointerAim';
 import { startLoop } from '../game/core/Loop';
 import { Renderer } from '../game/render/Renderer';
-import { playPot, playShot } from '../game/audio/sfx';
+import { playCollision, playPot, playShot } from '../game/audio/sfx';
 
 type Phase = 'aim' | 'lunge' | 'roll';
 
@@ -111,8 +111,14 @@ export default function GameScreen({ onExit }: { onExit: () => void }): JSX.Elem
       (dt) => {
         if (phase === 'roll') {
           step(world, dt);
-          // 进球音效：本帧有 POT 事件就播一次
-          if (world.events.some((e) => e.type === 'POT')) playPot();
+          // 音效：进球播一次，碰撞按撞击速度播
+          for (const e of world.events) {
+            if (e.type === 'POT') playPot();
+            else if (e.type === 'COLLISION') {
+              const impactSpeed = Math.hypot(e.a.vel.x - e.b.vel.x, e.a.vel.y - e.b.vel.y);
+              playCollision(impactSpeed);
+            }
+          }
           world.events.length = 0;
           if (allStopped(world)) {
             if (world.cue.potted) respawnCue(world);

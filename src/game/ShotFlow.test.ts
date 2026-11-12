@@ -42,7 +42,7 @@ describe('一杆完整流程：拖拽 → 预测 → 出杆 → 停稳', () => {
     expect(settle(world)).toBeLessThan(6);
 
     expect(b3!.potted).toBe(true);
-    expect(world.events.some((e) => e.ball.id === b3!.id)).toBe(true);
+    expect(world.events.some((e) => e.type === 'POT' && e.ball.id === b3!.id)).toBe(true);
     expect(cue!.potted).toBe(false);
   });
 

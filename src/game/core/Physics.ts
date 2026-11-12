@@ -28,7 +28,7 @@ const integrate = (world: World, dt: number): void => {
   }
 };
 
-const solveBallPair = (a: Ball, b: Ball): void => {
+const solveBallPair = (world: World, a: Ball, b: Ball): void => {
   const delta = sub(b.pos, a.pos);
   const d = Math.hypot(delta.x, delta.y);
   const minDist = a.radius + b.radius;
@@ -52,13 +52,14 @@ const solveBallPair = (a: Ball, b: Ball): void => {
   b.vel = add(b.vel, mul(n, j * invB));
   clampSpeed(a);
   clampSpeed(b);
+  world.events.push({ type: 'COLLISION', a, b });
 };
 
 const solveBalls = (world: World): void => {
   const live = world.balls.filter((b) => !b.potted);
   for (let i = 0; i < live.length; i++) {
     for (let j = i + 1; j < live.length; j++) {
-      solveBallPair(live[i]!, live[j]!);
+      solveBallPair(world, live[i]!, live[j]!);
     }
   }
 };

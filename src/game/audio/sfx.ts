@@ -89,3 +89,38 @@ export const playPot = (): void => {
     // 音频失败不影响游戏
   }
 };
+
+/** 球碰撞声：清脆"嗒"，比击打声更短更亮，8ms，4500Hz 带通。 */
+export const playCollision = (impactSpeed: number): void => {
+  try {
+    const c = ensureCtx();
+    const t = c.currentTime;
+    const duration = 0.008; // 8ms
+    const sampleRate = c.sampleRate;
+    const bufferSize = Math.floor(sampleRate * duration);
+    const buffer = c.createBuffer(1, bufferSize, sampleRate);
+    const data = buffer.getChannelData(0);
+    // 快速起音 + 指数衰减
+    for (let i = 0; i < bufferSize; i++) {
+      const env = Math.exp(-i / (bufferSize * 0.12));
+      data[i] = (Math.random() * 2 - 1) * env;
+    }
+    const noise = c.createBufferSource();
+    noise.buffer = buffer;
+    // 带通滤波：中心 4500Hz，Q=1.5，比击打声更亮
+    const filter = c.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 4500;
+    filter.Q.value = 1.5;
+    // 音量随撞击速度变化（0.2-0.6）
+    const volume = Math.min(0.2 + impactSpeed / 2000, 0.6);
+    const gain = c.createGain();
+    gain.gain.value = volume;
+    noise.connect(filter);
+    filter.connect(gain);
+    gain.connect(c.destination);
+    noise.start(t);
+  } catch {
+    // 音频失败不影响游戏
+  }
+};

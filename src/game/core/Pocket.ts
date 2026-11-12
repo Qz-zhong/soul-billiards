@@ -78,4 +78,6 @@ export const nearestPocket = (pos: Vec2, pockets: Pocket[]): Pocket => {
   return best;
 };
 
-export type PotEvent = { readonly type: 'POT'; readonly ball: Ball; readonly pocket: Pocket };
+export type PotEvent =
+  | { readonly type: 'POT'; readonly ball: Ball; readonly pocket: Pocket }
+  | { readonly type: 'COLLISION'; readonly a: Ball; readonly b: Ball };
