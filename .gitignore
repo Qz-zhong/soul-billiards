@@ -1,0 +1,22 @@
+node_modules/
+dist/
+dist-ssr/
+coverage/
+.vite/
+
+*.local
+*.tsbuildinfo
+*.log
+npm-debug.log*
+yarn-error.log*
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# 完整规格（词库、九关摆位、调参总表、14 条观察规则）不入库，公开发布后再解除
+docs/清台-产品开发文档.md

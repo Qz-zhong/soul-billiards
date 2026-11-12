@@ -1,0 +1,147 @@
+/* 色板单一来源（§8.3）。canvas 侧的 palette.ts 从这里取同一组值，不允许两处各写一遍。 */
+:root {
+  --wall: #1b1512;
+  --wall-lamp: rgba(255, 214, 150, 0.16);
+  --cloth: #1e6b49;
+  --cloth-lit: #2a8c5f;
+  --cloth-dark: #12462f;
+  --rail-hi: #5a3c29;
+  --rail-mid: #4a3122;
+  --rail-lo: #2e1d14;
+  --brass: #8a6c3c;
+  --pocket: #07100c;
+  --cue: #fbf7f0;
+  --text: #f0ebe3;
+  --text-dim: rgba(240, 235, 227, 0.66);
+  --gold: #e8b45c;
+
+  --ch1-1: #7fa8c9;
+  --ch1-2: #a0b48c;
+  --ch1-3: #6e9bb8;
+  --ch1-4: #8fb0c4;
+  --ch2-1: #d9a441;
+  --ch2-2: #c98f35;
+  --ch2-3: #e0b75c;
+  --ch2-4: #ce9b3e;
+  --ch3-1: #c05b6e;
+  --ch3-2: #a84c63;
+  --ch3-3: #ce6f7f;
+  --ch3-4: #b5566a;
+
+  --anger: #d2452f;
+  --anxiety: #4fbfbe;
+  --social: #e1b9e8;
+  --self-critic: #4a4560;
+
+  --table-max: 520px;
+  --font: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  height: 100dvh;
+  background: var(--wall);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+body {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: var(--table-max);
+  margin: 0 auto;
+  padding: max(24px, env(safe-area-inset-top)) 20px
+    max(24px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.screen--title {
+  background:
+    radial-gradient(120% 70% at 50% 18%, var(--wall-lamp), transparent 70%),
+    linear-gradient(180deg, rgba(30, 107, 73, 0.42), rgba(27, 21, 18, 0.94));
+}
+
+.l1 {
+  margin: 0;
+  font-size: clamp(36px, 11.28vw, 59px);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  /* 字距在末尾也留了一份空隙，视觉上会把标题推离中心 */
+  padding-left: 0.3em;
+  color: var(--cue);
+}
+
+.sub {
+  margin: 0;
+  font-size: clamp(15px, 4.62vw, 24px);
+  line-height: 1.9;
+  color: var(--text-dim);
+}
+
+.meta {
+  margin: 0;
+  font-size: clamp(16px, 4.87vw, 25px);
+  letter-spacing: 0.06em;
+  color: rgba(233, 237, 243, 0.42);
+}
+
+.capsule {
+  margin-top: 18px;
+  padding: 13px 46px;
+  border: 1px solid rgba(240, 235, 227, 0.28);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: clamp(16px, 4.87vw, 25px);
+  letter-spacing: 0.06em;
+  touch-action: manipulation;
+}
+
+.capsule:disabled {
+  opacity: 0.4;
+}
+
+.status {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(233, 237, 243, 0.34);
+}
+
+/* §8.4 强制竖屏的横屏引导页随 M5 一起落地，此处不预留空样式 */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
