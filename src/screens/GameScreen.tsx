@@ -15,6 +15,7 @@ import {
 } from '../game/input/PointerAim';
 import { startLoop } from '../game/core/Loop';
 import { Renderer } from '../game/render/Renderer';
+import { playPot, playShot } from '../game/audio/sfx';
 
 type Phase = 'aim' | 'lunge' | 'roll';
 
@@ -110,6 +111,8 @@ export default function GameScreen({ onExit }: { onExit: () => void }): JSX.Elem
       (dt) => {
         if (phase === 'roll') {
           step(world, dt);
+          // 进球音效：本帧有 POT 事件就播一次
+          if (world.events.some((e) => e.type === 'POT')) playPot();
           world.events.length = 0;
           if (allStopped(world)) {
             if (world.cue.potted) respawnCue(world);
@@ -119,6 +122,7 @@ export default function GameScreen({ onExit }: { onExit: () => void }): JSX.Elem
           const t = performance.now() - lungeStart;
           if (t >= T.LUNGE_FWD_MS + T.LUNGE_BACK_MS) {
             world.cue.vel = mul(shotDir, shotV0);
+            playShot();
             world.strokes++;
             phase = 'roll';
           }
