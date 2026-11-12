@@ -7,7 +7,7 @@
 |----|------|
 | 赛道 | Qoder 高校创造力大赛 · LifeHack 生活娱乐 |
 | 形态 | 纯前端 Web App——无后端、无登录、运行期零第三方请求 |
-| 部署 | Qoder Sites，**public** 访问模式，静态产物 |
+| 部署 | Qoder Sites，**public** 访问模式，静态产物 · <https://soul-billiards-436212hxx0z.qoder.zone> |
 | 规格来源 | [`docs/设计摘要.md`](docs/设计摘要.md)（公开摘要）。完整规格文档 v1.0 暂不入库，正式发布后公开 |
 | 当前阶段 | **仓库骨架**。`src/game/**` 的核心实现属于 M0 及之后，尚未开始 |
 
